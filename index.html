@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nex3.ai</title>
+  <meta name="description" content="nex3.ai - The next evolution of access. Web3 and AI innovations by AccessPass Live Nordic.">
+  <meta property="og:title" content="nex3.ai">
+  <meta property="og:description" content="The future of access is being rewritten.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nex3.ai">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%23ffb800'/></svg>">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    ::selection {
+      background: rgba(255, 184, 0, 0.3);
+      color: #fff;
+    }
+
+    :root {
+      --gold: #ffb800;
+      --gold-hover: #e8a802;
+      --gold-active: #b68400;
+      --bg-deep: #0a0a0a;
+      --bg-100: #101010;
+      --bg-150: #151515;
+      --bg-200: #222;
+      --text-primary: #d1d1d1;
+      --text-secondary: #a3a3a3;
+      --text-muted: #555;
+      --border: #333;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Particle Canvas */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Grid Overlay */
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 184, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 184, 0, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* Ambient Glow Orbs */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 2;
+      filter: blur(80px);
+    }
+
+    .glow-orb-1 {
+      width: 400px;
+      height: 400px;
+      top: -100px;
+      right: -100px;
+      background: radial-gradient(circle, rgba(255, 184, 0, 0.07) 0%, transparent 70%);
+      animation: floatOrb1 25s ease-in-out infinite;
+    }
+
+    .glow-orb-2 {
+      width: 350px;
+      height: 350px;
+      bottom: -50px;
+      left: -80px;
+      background: radial-gradient(circle, rgba(255, 184, 0, 0.05) 0%, transparent 70%);
+      animation: floatOrb2 30s ease-in-out infinite;
+    }
+
+    .glow-orb-3 {
+      width: 250px;
+      height: 250px;
+      top: 40%;
+      left: 50%;
+      background: radial-gradient(circle, rgba(255, 184, 0, 0.04) 0%, transparent 70%);
+      animation: floatOrb3 20s ease-in-out infinite;
+    }
+
+    /* Main Content */
+    main.content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* Logo */
+    .logo-container {
+      opacity: 0;
+      animation: slideUp 1s ease-out 0.2s forwards;
+    }
+
+    .logo {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      text-shadow:
+        0 0 40px rgba(255, 184, 0, 0.3),
+        0 0 80px rgba(255, 184, 0, 0.1);
+      animation: glowPulse 3s ease-in-out infinite alternate;
+    }
+
+    .logo .accent {
+      color: var(--gold);
+    }
+
+    .logo-underline {
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      margin: 1.2rem auto 0;
+      box-shadow: 0 0 10px rgba(255, 184, 0, 0.5), 0 0 20px rgba(255, 184, 0, 0.2);
+      animation: expandLine 0.8s ease-out 0.8s forwards;
+    }
+
+    /* Tagline */
+    .tagline {
+      font-size: clamp(0.85rem, 2.5vw, 1.15rem);
+      font-weight: 300;
+      color: var(--text-secondary);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 2rem;
+      opacity: 0;
+      animation: slideUp 1s ease-out 0.6s forwards;
+    }
+
+    /* Divider */
+    .divider {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      margin: 1.8rem auto;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out 0.9s forwards;
+      box-shadow: 0 0 8px rgba(255, 184, 0, 0.4);
+    }
+
+    /* Sub-tagline */
+    .sub-tagline {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: slideUp 1s ease-out 1s forwards;
+    }
+
+    .sub-tagline .dot {
+      color: var(--gold);
+      margin: 0 0.6em;
+      font-size: 0.6em;
+      vertical-align: middle;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      margin-top: 2.5rem;
+      display: flex;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: slideUp 1s ease-out 1.2s forwards;
+    }
+
+    .cta-section input[type="email"] {
+      background: var(--bg-150);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 0.75rem 1.2rem;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      width: 280px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .cta-section input[type="email"]::placeholder {
+      color: var(--text-muted);
+    }
+
+    .cta-section input[type="email"]:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 15px rgba(255, 184, 0, 0.1), 0 0 30px rgba(255, 184, 0, 0.05);
+    }
+
+    .cta-section button {
+      background: var(--gold);
+      color: #000;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .cta-section button:hover {
+      background: var(--gold-hover);
+      box-shadow: 0 0 20px rgba(255, 184, 0, 0.3), 0 0 40px rgba(255, 184, 0, 0.1);
+    }
+
+    .cta-section button:active {
+      background: var(--gold-active);
+      transform: scale(0.98);
+    }
+
+    .success-message {
+      color: var(--gold);
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    /* Badge */
+    .badge {
+      margin-top: 4rem;
+      font-size: 0.7rem;
+      color: #444;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 1s ease-out 1.8s forwards;
+    }
+
+    .badge a {
+      color: var(--gold);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .badge a:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    /* Footer line */
+    .footer-line {
+      margin-top: 1.2rem;
+      font-size: 0.65rem;
+      color: #333;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      animation: fadeIn 1s ease-out 2.2s forwards;
+    }
+
+    /* Keyframe Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      from {
+        text-shadow:
+          0 0 40px rgba(255, 184, 0, 0.2),
+          0 0 80px rgba(255, 184, 0, 0.05);
+      }
+      to {
+        text-shadow:
+          0 0 60px rgba(255, 184, 0, 0.4),
+          0 0 120px rgba(255, 184, 0, 0.15),
+          0 0 200px rgba(255, 184, 0, 0.05);
+      }
+    }
+
+    @keyframes expandLine {
+      from { width: 0; }
+      to { width: 60px; }
+    }
+
+    @keyframes floatOrb1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(-30px, 40px) scale(1.05); }
+      50% { transform: translate(20px, -20px) scale(0.95); }
+      75% { transform: translate(-10px, -30px) scale(1.02); }
+    }
+
+    @keyframes floatOrb2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(40px, -30px) scale(1.08); }
+      66% { transform: translate(-20px, 20px) scale(0.96); }
+    }
+
+    @keyframes floatOrb3 {
+      0%, 100% { transform: translate(-50%, 0) scale(1); }
+      25% { transform: translate(calc(-50% + 50px), -40px) scale(1.1); }
+      50% { transform: translate(calc(-50% - 30px), 30px) scale(0.9); }
+      75% { transform: translate(calc(-50% + 20px), 20px) scale(1.05); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .cta-section {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 320px;
+      }
+
+      .cta-section input[type="email"] {
+        width: 100%;
+      }
+
+      .cta-section button {
+        width: 100%;
+      }
+
+      .glow-orb-1 { width: 250px; height: 250px; }
+      .glow-orb-2 { width: 200px; height: 200px; }
+      .glow-orb-3 { width: 150px; height: 150px; }
+    }
+
+    @media (max-width: 480px) {
+      main.content {
+        padding: 1.5rem;
+      }
+
+      .tagline {
+        letter-spacing: 0.1em;
+      }
+
+      .badge {
+        margin-top: 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particle-canvas"></canvas>
+  <div class="grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+  <div class="glow-orb glow-orb-3"></div>
+
+  <main class="content">
+    <div class="logo-container">
+      <h1 class="logo">nex3<span class="accent">.ai</span></h1>
+      <div class="logo-underline"></div>
+    </div>
+
+    <p class="tagline">The future of access is being rewritten</p>
+
+    <div class="divider"></div>
+
+    <p class="sub-tagline">
+      Web3<span class="dot">&bull;</span>AI<span class="dot">&bull;</span>Ticketing<span class="dot">&bull;</span>Licensing
+    </p>
+
+    <div class="cta-section" id="cta">
+      <input type="email" id="email-input" placeholder="Enter your email" autocomplete="email">
+      <button id="cta-button">Get Early Access</button>
+    </div>
+
+    <p class="badge">A branch of <a href="https://axp.live" target="_blank" rel="noopener">axp.live</a></p>
+    <p class="footer-line">&copy; 2026 nex3.ai &mdash; AccessPass Live Nordic</p>
+  </main>
+
+  <script>
+    (function () {
+      // --- Particle System ---
+      const canvas = document.getElementById('particle-canvas');
+      const ctx = canvas.getContext('2d');
+      let width, height;
+      let particles = [];
+      let mouse = { x: -1000, y: -1000 };
+      const isMobile = window.innerWidth < 768;
+      const PARTICLE_COUNT = isMobile ? 40 : 80;
+      const CONNECTION_DIST = isMobile ? 100 : 130;
+      const MOUSE_RADIUS = 150;
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+
+      class Particle {
+        constructor() {
+          this.reset();
+        }
+
+        reset() {
+          this.x = Math.random() * width;
+          this.y = Math.random() * height;
+          this.size = Math.random() * 1.5 + 0.5;
+          this.speedX = (Math.random() - 0.5) * 0.4;
+          this.speedY = (Math.random() - 0.5) * 0.4;
+          this.opacity = Math.random() * 0.4 + 0.1;
+          this.isGold = Math.random() < 0.3;
+        }
+
+        update() {
+          // Mouse repulsion
+          if (!isMobile) {
+            const dx = this.x - mouse.x;
+            const dy = this.y - mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < MOUSE_RADIUS && dist > 0) {
+              const force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS * 0.02;
+              this.speedX += (dx / dist) * force;
+              this.speedY += (dy / dist) * force;
+            }
+          }
+
+          // Damping
+          this.speedX *= 0.999;
+          this.speedY *= 0.999;
+
+          this.x += this.speedX;
+          this.y += this.speedY;
+
+          // Wrap
+          if (this.x < -10) this.x = width + 10;
+          if (this.x > width + 10) this.x = -10;
+          if (this.y < -10) this.y = height + 10;
+          if (this.y > height + 10) this.y = -10;
+        }
+
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          if (this.isGold) {
+            ctx.fillStyle = `rgba(255, 184, 0, ${this.opacity})`;
+          } else {
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.7})`;
+          }
+          ctx.fill();
+        }
+      }
+
+      function init() {
+        resize();
+        particles = [];
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          particles.push(new Particle());
+        }
+      }
+
+      function drawConnections() {
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < CONNECTION_DIST) {
+              const opacity = (1 - dist / CONNECTION_DIST) * 0.12;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(255, 184, 0, ${opacity})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        particles.forEach(p => {
+          p.update();
+          p.draw();
+        });
+
+        drawConnections();
+        requestAnimationFrame(animate);
+      }
+
+      // Event listeners
+      window.addEventListener('resize', () => {
+        resize();
+      });
+
+      if (!isMobile) {
+        document.addEventListener('mousemove', (e) => {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        });
+      }
+
+      init();
+      animate();
+
+      // --- Email Signup Handler ---
+      const ctaSection = document.getElementById('cta');
+      const emailInput = document.getElementById('email-input');
+      const ctaButton = document.getElementById('cta-button');
+
+      // Check if already signed up
+      if (localStorage.getItem('nex3_signup')) {
+        showSuccess();
+      }
+
+      ctaButton.addEventListener('click', handleSignup);
+      emailInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleSignup();
+      });
+
+      function handleSignup() {
+        const email = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+          emailInput.style.borderColor = '#ff4444';
+          emailInput.style.boxShadow = '0 0 15px rgba(255, 68, 68, 0.1)';
+          setTimeout(() => {
+            emailInput.style.borderColor = '';
+            emailInput.style.boxShadow = '';
+          }, 1500);
+          return;
+        }
+
+        localStorage.setItem('nex3_signup', email);
+        showSuccess();
+      }
+
+      function showSuccess() {
+        ctaSection.innerHTML = '<p class="success-message">You\'re on the list. We\'ll be in touch.</p>';
+      }
+    })();
+  </script>
+</body>
+</html>
