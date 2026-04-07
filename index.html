@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nex3.ai</title>
+    <meta
+      name="description"
+      content="nex3.ai - Cryptographic infrastructure for digital rights, licensing and autonomous settlement."
+    />
+    <meta property="og:title" content="nex3.ai" />
+    <meta
+      property="og:description"
+      content="Cryptographic infrastructure for digital rights, licensing and autonomous settlement."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nex3.ai" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,5 95,50 50,95 5,50' fill='%23d9a520'/><polygon points='50,5 5,50 50,50' fill='%232d4070'/><polygon points='50,50 5,50 50,95' fill='%231c2a4c'/><polygon points='50,50 95,50 50,95' fill='%237a5c12'/></svg>"
+    />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      ::selection {
+        background: rgba(255, 184, 0, 0.3);
+        color: #fff;
+      }
+
+      :root {
+        --gold: #ffb800;
+        --gold-hover: #e8a802;
+        --gold-active: #b68400;
+        --bg-deep: #0a0a0a;
+        --bg-100: #101010;
+        --bg-150: #151515;
+        --bg-200: #222;
+        --text-primary: #d1d1d1;
+        --text-secondary: #a3a3a3;
+        --text-muted: #555;
+        --border: #333;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg-deep);
+        color: var(--text-primary);
+        font-family:
+          "Satoshi",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Particle Canvas */
+      #particle-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* Grid Overlay */
+      .grid-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(255, 184, 0, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 184, 0, 0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+      }
+
+      /* Ambient Glow Orbs */
+      .glow-orb {
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 2;
+        filter: blur(80px);
+      }
+
+      .glow-orb-1 {
+        width: 400px;
+        height: 400px;
+        top: -100px;
+        right: -100px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 184, 0, 0.07) 0%,
+          transparent 70%
+        );
+        animation: floatOrb1 25s ease-in-out infinite;
+      }
+
+      .glow-orb-2 {
+        width: 350px;
+        height: 350px;
+        bottom: -50px;
+        left: -80px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 184, 0, 0.05) 0%,
+          transparent 70%
+        );
+        animation: floatOrb2 30s ease-in-out infinite;
+      }
+
+      .glow-orb-3 {
+        width: 250px;
+        height: 250px;
+        top: 40%;
+        left: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 184, 0, 0.04) 0%,
+          transparent 70%
+        );
+        animation: floatOrb3 20s ease-in-out infinite;
+      }
+
+      /* Main Content */
+      main.content {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      /* Logo */
+      .logo-container {
+        display: flex;
+        align-items: center;
+        gap: clamp(1rem, 3vw, 2rem);
+        opacity: 0;
+        animation: slideUp 1s ease-out 0.2s forwards;
+      }
+
+      .logo-diamond {
+        width: clamp(60px, 12vw, 100px);
+        height: clamp(60px, 12vw, 100px);
+        flex-shrink: 0;
+        filter: drop-shadow(0 0 20px rgba(217, 165, 30, 0.2));
+      }
+
+      .logo-text {
+        font-size: clamp(2.5rem, 7vw, 5rem);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .logo-text .white {
+        color: #fff;
+      }
+
+      .logo-text .gold {
+        color: #d9a520;
+      }
+
+      .logo-text .silver {
+        color: #8899aa;
+      }
+
+      /* Subtitle */
+      .subtitle {
+        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+        font-weight: 400;
+        color: var(--text-secondary);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-top: 1.5rem;
+        opacity: 0;
+        animation: slideUp 1s ease-out 0.5s forwards;
+      }
+
+      /* Tagline */
+      .tagline {
+        font-size: clamp(0.8rem, 2vw, 1.05rem);
+        font-weight: 300;
+        color: var(--text-secondary);
+        letter-spacing: 0.08em;
+        margin-top: 2.5rem;
+        max-width: 560px;
+        line-height: 1.6;
+        opacity: 0;
+        animation: slideUp 1s ease-out 0.6s forwards;
+      }
+
+      /* Footer line */
+      .footer-line {
+        position: fixed;
+        bottom: 2rem;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 0.65rem;
+        color: #333;
+        letter-spacing: 0.08em;
+        opacity: 0;
+        animation: fadeIn 1s ease-out 1.2s forwards;
+      }
+
+      /* Keyframe Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes floatOrb1 {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        25% {
+          transform: translate(-30px, 40px) scale(1.05);
+        }
+        50% {
+          transform: translate(20px, -20px) scale(0.95);
+        }
+        75% {
+          transform: translate(-10px, -30px) scale(1.02);
+        }
+      }
+
+      @keyframes floatOrb2 {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(40px, -30px) scale(1.08);
+        }
+        66% {
+          transform: translate(-20px, 20px) scale(0.96);
+        }
+      }
+
+      @keyframes floatOrb3 {
+        0%,
+        100% {
+          transform: translate(-50%, 0) scale(1);
+        }
+        25% {
+          transform: translate(calc(-50% + 50px), -40px) scale(1.1);
+        }
+        50% {
+          transform: translate(calc(-50% - 30px), 30px) scale(0.9);
+        }
+        75% {
+          transform: translate(calc(-50% + 20px), 20px) scale(1.05);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .glow-orb-1 {
+          width: 250px;
+          height: 250px;
+        }
+        .glow-orb-2 {
+          width: 200px;
+          height: 200px;
+        }
+        .glow-orb-3 {
+          width: 150px;
+          height: 150px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        main.content {
+          padding: 1.5rem;
+        }
+
+        .tagline {
+          letter-spacing: 0.1em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="particle-canvas"></canvas>
+    <div class="grid-overlay"></div>
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+
+    <main class="content">
+      <div class="logo-container">
+        <svg class="logo-diamond" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Diamond quadrants -->
+          <polygon points="50,5 95,50 50,50" fill="#d9a520"/>
+          <polygon points="50,5 5,50 50,50" fill="#2d4070"/>
+          <polygon points="50,50 95,50 50,95" fill="#7a5c12"/>
+          <polygon points="50,50 5,50 50,95" fill="#1c2a4c"/>
+          <!-- Center lines -->
+          <line x1="50" y1="5" x2="50" y2="95" stroke="rgba(0,0,0,0.15)" stroke-width="0.5"/>
+          <line x1="5" y1="50" x2="95" y2="50" stroke="rgba(0,0,0,0.15)" stroke-width="0.5"/>
+          <!-- Accent dot -->
+          <circle cx="12" cy="50" r="2.5" fill="white"/>
+        </svg>
+        <h1 class="logo-text">
+          <span class="white">Ne</span><span class="gold">X</span><span class="silver">3</span>
+        </h1>
+      </div>
+
+      <h2 class="subtitle">Blockchain infrastructure</h2>
+
+      <p class="footer-line">
+        &copy; 2026 NeX3 Blockchain infrastructure
+      </p>
+    </main>
+
+    <script>
+      (function () {
+        // --- Particle System ---
+        const canvas = document.getElementById("particle-canvas");
+        const ctx = canvas.getContext("2d");
+        let width, height;
+        let particles = [];
+        let mouse = { x: -1000, y: -1000 };
+        const isMobile = window.innerWidth < 768;
+        const PARTICLE_COUNT = isMobile ? 40 : 80;
+        const CONNECTION_DIST = isMobile ? 100 : 130;
+        const MOUSE_RADIUS = 150;
+
+        function resize() {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+          constructor() {
+            this.reset();
+          }
+
+          reset() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.size = Math.random() * 1.5 + 0.5;
+            this.speedX = (Math.random() - 0.5) * 0.4;
+            this.speedY = (Math.random() - 0.5) * 0.4;
+            this.opacity = Math.random() * 0.4 + 0.1;
+            this.isGold = Math.random() < 0.3;
+          }
+
+          update() {
+            // Mouse repulsion
+            if (!isMobile) {
+              const dx = this.x - mouse.x;
+              const dy = this.y - mouse.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < MOUSE_RADIUS && dist > 0) {
+                const force = ((MOUSE_RADIUS - dist) / MOUSE_RADIUS) * 0.02;
+                this.speedX += (dx / dist) * force;
+                this.speedY += (dy / dist) * force;
+              }
+            }
+
+            // Damping
+            this.speedX *= 0.999;
+            this.speedY *= 0.999;
+
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            // Wrap
+            if (this.x < -10) this.x = width + 10;
+            if (this.x > width + 10) this.x = -10;
+            if (this.y < -10) this.y = height + 10;
+            if (this.y > height + 10) this.y = -10;
+          }
+
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            if (this.isGold) {
+              ctx.fillStyle = `rgba(255, 184, 0, ${this.opacity})`;
+            } else {
+              ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.7})`;
+            }
+            ctx.fill();
+          }
+        }
+
+        function init() {
+          resize();
+          particles = [];
+          for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push(new Particle());
+          }
+        }
+
+        function drawConnections() {
+          for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+              const dx = particles[i].x - particles[j].x;
+              const dy = particles[i].y - particles[j].y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+
+              if (dist < CONNECTION_DIST) {
+                const opacity = (1 - dist / CONNECTION_DIST) * 0.12;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = `rgba(255, 184, 0, ${opacity})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+              }
+            }
+          }
+        }
+
+        function animate() {
+          ctx.clearRect(0, 0, width, height);
+
+          particles.forEach((p) => {
+            p.update();
+            p.draw();
+          });
+
+          drawConnections();
+          requestAnimationFrame(animate);
+        }
+
+        // Event listeners
+        window.addEventListener("resize", () => {
+          resize();
+        });
+
+        if (!isMobile) {
+          document.addEventListener("mousemove", (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+          });
+        }
+
+        init();
+        animate();
+      })();
+    </script>
+  </body>
+</html>
