@@ -199,7 +199,7 @@
       /* Subtitle */
       .subtitle {
         font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-        font-weight: 400;
+        font-weight: 500;
         color: var(--text-secondary);
         letter-spacing: 0.15em;
         text-transform: uppercase;
@@ -210,15 +210,15 @@
 
       /* Tagline */
       .tagline {
-        font-size: clamp(0.8rem, 2vw, 1.05rem);
-        font-weight: 300;
-        color: var(--text-secondary);
+        font-size: 0.94rem;
+        font-weight: 400;
+        color: var(--text-muted);
         letter-spacing: 0.08em;
-        margin-top: 2.5rem;
+        margin-top: 0.4rem;
         max-width: 560px;
         line-height: 1.6;
         opacity: 0;
-        animation: slideUp 1s ease-out 0.6s forwards;
+        animation: slideUpFlat 1s ease-out 0.6s forwards;
       }
 
       /* Footer line */
@@ -236,6 +236,17 @@
       }
 
       /* Keyframe Animations */
+      @keyframes slideUpFlat {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scaleY(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scaleY(0.9);
+        }
+      }
+
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -348,10 +359,8 @@
         </h1>
       </div>
 
-      <h2 class="subtitle">
-        Cryptographic infrastructure for<br />
-        digital rights, licensing & autonomous settlement
-      </h2>
+      <h2 class="subtitle">MODULAR COMPONENT INFRASTRUCTURE</h2>
+      <p class="tagline">CRYPTOGRAPHY · AI · AUTONOMOUS SETTLEMENT</p>
 
       <p class="footer-line">&copy; 2026 NeX3 Blockchain infrastructure</p>
     </main>
